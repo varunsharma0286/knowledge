@@ -3,9 +3,11 @@ step1: curl -u 'USER' https://api.github.com/user/repos -d '{"name":"REPO"}'
 	#Remember replace USER with your username and REPO with your repository/application name!
 	#e.g. to add repo "knowledge"
 	#curl -u 'varunsharma0286' https://api.github.com/user/repos -d '{"name":"knowledge"}'
+	#
 
-step2:git remote add origin git@github.com:USER/REPO.git
-step3:git push origin master
+step2:git init
+step3:git add <files_in_repo>
+step4:git commit
+step5:git remote add origin https://github.com/<user_name>/<repo_name>.git
+step6:git push -u origin master
 
-git remote add origin https://github.com/varunsharma0286/knowledge.git
-git push -u origin master
