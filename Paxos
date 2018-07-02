@@ -13,7 +13,9 @@ Processes:
 Goal:
 Every process agrees on a value from the set of proposed values
 
-
+Requirements:
+	* Protocol should work under process failures and message delays/losses
+	* Consensus is reached via a majority
 
 Roles of a process (aka PAL):
 1) Proposer: 
@@ -24,4 +26,79 @@ Roles of a process (aka PAL):
 3) Learner
 	processes that learns the outcome (i.e. chosen value)
 
+Protocol Overview:
+* Proposal -> P(N,V)
+where N-> Proposal number. This should be strictly increasing and glabally unique across all proposers. i.e. NO TIE
+e.g. of N- > 3.1, 3.2,3.3 for process with pid 3
 
+* PHASES (AKA PPL):
+	Prepare:
+		Proposer prepares what to propose. For this it will first learn previously-accepted proposals from acceptots
+	Propose:
+		After preparation, proposer sends out the proposal
+	Learn:
+		Learners learn the outcome
+
+PHASE 1-> PREPARE
+	step 1: Proposer chooses a proposal number "N" and sends a "prepare" request to acceptors. This is a question to acceptors "have you accepted any proposal yet"
+		Acceptors keeps a cache of all the proposals it has received.
+	step 2: On receiving this "prepare" request from Proposors, an acceptor will:
+		a) Will no longer accept any proposal with proposal number < N
+		b) If it has accepted anything, than it will respond back with the accepted value with the highest proposal number less than N
+	For instance
+		step 1: P0(5) -> to the acceptors A0 and A1
+		step 2: A0 -> Highest acceptance (4, 10)
+			A1 -> Highest acceptance (2, 20)
+			A0 -(sends)-> (4, 10) to P0
+			A1 -(sends)-> (2, 20) to P0
+
+PHASE 2-> PROPOSE (lets get naughty):
+	If proposer accepts replies from majority of acceptors, it sends an accept request for proposal P(N,V) where
+		N-> Highest proposal number received in replies from Acceptos.
+		V-> Value corresponding to "N"
+	If no replies or no accepted values was returned in phase1, proposer sends out an "accept" request for the new proposal P(N,V)
+	Acceptors can either
+		*Accept this proposal
+		*Reject this proposal: This in case if acceptor has received an another "prepare" request with "N'"> "N"
+
+PHASE 3: LEARN:
+	Learner gets to know the chosen value. Ways to do this:
+	a) Each acceptor notifies the learner when it accepts a proposal:
+		Learners will know if majority has accepted a proposal
+		Costly (more messages)
+	b) Elect a "Distinguished Leaner (DL)":
+		Acceptors sends their accepted values to this DL process
+		DL than notifies other learners
+		Drawback: SPOF
+	c) Elect a set of DL's.
+
+Problematic Scenarios:
+	step1: 	P0 -send Prepare(4)-> A0 and A1
+	step2:	A0 -Replies (3, 10)-> P0
+		A1 -Replies (2, 20)-> P0
+		A0 and A1 sets the highest N to 4
+		P0 on receiving the replies, sets the value as (4,10)
+
+	step3:	P1 -sends Prepare(5)-> A0 and A1
+	step4:	A0 -Replies (3, 10)-> P1
+		A1 -Replies (2, 20)-> P1
+		A0 and A1 sets the highest N to 5
+		P1 on receiving the replies, sets the N,V as (5,10)
+
+	step5: 	P0 performs PHASE2 and proposes P(4,10)
+		P0 -Propose(4,10)-> A0
+		P0 -Propose(4,10)-> A1
+	step6: 	A0 and A1 "rejects" this proposal as highest N is set to "5" from step 4
+
+	step7:	P0 performs PHASE1 again and sends "prepare" request" with N=6
+	step8: 	A0 and A1 replies with (3,10) and (2,20)
+		A0 and A1 sets the highest N to be "6"
+	
+	step9:	P1 performs PHASE2 and proposes (5,10)
+	step10: A0 and A1 "rejects" this proposal of P1 as highest N is set to "6" from step step8.
+	And this can go on forever.
+
+	This is a potential race condition and threatens the "Liveness" guarantee.
+Solution:
+	Elect a "Distinguished Proposer (DP)" i.e. have only one proposer at a time
+	
