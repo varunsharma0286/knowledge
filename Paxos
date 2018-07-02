@@ -1,0 +1,27 @@
+#This document contains notes about Paxos protocol
+Paxos is a protocol for achieving a "consensus" in distributed systems.
+
+Assumptions:
+Network:
+	* Network is asynchronous (i.e. msg losses and delays)
+	* Msgs can be lost/duplicated but no corruption (i.e. TCP)
+Processes:
+	* Processes can crash
+	* Processes are non-byzantine (only crash-stop)
+	* Processes have permanent stop
+	* Processes can propose values
+Goal:
+Every process agrees on a value from the set of proposed values
+
+
+
+Roles of a process (aka PAL):
+1) Proposer: 
+	processes which proposes values
+2) Acceptor: 
+	processes that accepts values. Accept meaning it is "considering" that  	value. 
+	Majority acceptance = value chosen
+3) Learner
+	processes that learns the outcome (i.e. chosen value)
+
+
