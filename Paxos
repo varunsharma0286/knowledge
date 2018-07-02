@@ -1,5 +1,5 @@
 #This document contains notes about Paxos protocol
-Paxos is a protocol for achieving a "consensus" in distributed systems.
+Paxos is an algorithm for achieving a "consensus" in distributed systems.
 
 Assumptions:
 Network:
