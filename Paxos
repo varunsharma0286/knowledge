@@ -102,3 +102,8 @@ Problematic Scenarios:
 Solution:
 	Elect a "Distinguished Proposer (DP)" i.e. have only one proposer at a time
 	
+References:
+http://mesos.apache.org/documentation/latest/replicated-log-internals/#use-cases
+https://ramcloud.stanford.edu/~ongaro/userstudy/paxos.pdf
+http://uchicago-cs.github.io/cmsc23310/pa.html
+https://ramcloud.stanford.edu/~ongaro/userstudy/
