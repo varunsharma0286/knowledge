@@ -14,3 +14,11 @@ step6:git push -u origin master
 #To store the credentials (this prevents git from asking username/password every time)
 git config --global credential.helper cache
 #git config credential.helper store
+
+From gitlab:
+cd existing_folder
+git init
+git remote add origin git@git.flexwin.intranet.flextrade.com:Market_Data/file.git
+git add .
+git commit -m "Initial commit"
+git push -u origin master
