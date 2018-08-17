@@ -1,0 +1,36 @@
+#Template to create a static lib:
+all:  libs $(PLATFORM)/TestBinary #List of all the output binaries/libs
+
+#libs should be of the format
+#libs:   $(PATH_OF_OUTPUT_DIR)/<name_of_static_lib>
+
+#e.g , this is absolute path
+#libs:  $(PROJECTS_HOME)/$(PLATORM)/libcore.a
+
+#e.g., for relative path (most relevant)
+libs: $(PLATORM)/libcore.a
+
+#Add all the includes
+INC = -I./include
+INC = $(PROJECTS_HOME)/TEST/include
+
+#Add the object files
+OBJ  = TheadPool.o SPSCQueue.o
+OBJ += MPSCQueue.o ServerSocket.o
+
+#Libraries:
+LIB_CORE = $(PLATFORM)/libcore.a
+
+
+OBJP = $(addprefix $(PLATFORM)/,$(OBJ))
+
+C++ = /usr/bin/g++
+C++FLAGS= -g -fPIC -fno-strict-aliasing -rdynamic $(INC) -Wreturn-type -Wno-deprecated -Wall
+LDFLAGS  += -lpthread -lcrypto -ldbus-1 -lrt -ldl
+ARFLAGS = rvu
+
+$(PLATORM)/libcore.a:$(OBJP)
+    ar $(ARFLAGS) $@ $(OBJA); ranlib $@
+ 
+$(PLATFORM)/TestBinary: $(PLATFORM)/Tester.o $(LIB_CORE)
+    $(C++) $(LDFLAGS) $(PLATFORM)/Tester.o $(LIB_CORE) -o $@
