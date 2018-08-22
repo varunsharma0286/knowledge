@@ -17,3 +17,11 @@ pmap -x <pid>
 
 #Using awk to create a key value pair
 awk -F',' 'BEGIN {j=0} {for(i=1;i<= NF;i++) { if (j == 0) {name[i]=$i;} else {print i,name[i],"=",$i;}} j++; }'
+
+#Expect script section
+This is to login to other machine using expect script
+#!/usr/bin/expect
+spawn ssh -oStrictHostKeyChecking=no -oCheckHostIP=no user@machine
+expect "password"
+send "$PASSWORD\n"
+interact
