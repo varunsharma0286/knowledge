@@ -1,0 +1,7 @@
+List of the topics to go through:
+
+C++
+1) Move semantics
+2) Auto pointers:
+  std::unique_ptr
+ 
