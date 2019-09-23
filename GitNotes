@@ -25,3 +25,9 @@ git push -u origin master
 
 #To get all new info from git:
 git fetch
+
+#To use vimdiff for viewing diffs:
+git config --global diff.tool vimdiff
+git config --global difftool.prompt false
+git config --global alias.d difftool
+git d <Modified_file_name> #This is to view the diff
